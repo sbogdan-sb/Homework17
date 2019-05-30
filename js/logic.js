@@ -13,12 +13,9 @@ d3.json(url, d => {
         fillOpacity: .4
       }).bindPopup("Magnitude: " + feature.properties.mag)
   }).addTo(Map);
-
-  // console.log(d.features)
 });
 
 function setRadius(mag) {
-  // console.log(mag);
   return mag * 7;
 }
 
@@ -39,22 +36,6 @@ function setColor(mag) {
   }
 }
 
-
-
-
-
-
-// function getColor(d) {
-//   return d > 5 ? '#800026' :
-//          d > 4 ? '#BD0026' :
-//          d > 3 ? '#E31A1C' :
-//          d > 2 ? '#FC4E2A' :
-//          d > 1 ? '#FEB24C' :
-//                  '#FFEDA0';
-// }
-
-
-// Create our map, giving it the streetmap and earthquakes layers to display on load
 var Map = L.map("map", {
   center: [40, -98],
   zoom: 4
@@ -67,32 +48,24 @@ L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={
   accessToken: API_KEY
 }).addTo(Map);
 
+function getColor(d) {
+  return d >= 5 ? "#800026" :
+         d >= 4 ? "#BD0026" :
+         d >= 3 ? "#E31A1C" :
+         d >= 2 ? "#FC4E2A" :
+         d >= 1 ? "#FEB24C" :
+                  "#FFEDA0";
+}
 
-var legend = L.control({position: 'bottomright'});
-    legend.onAdd = function () {
+var legend = L.control({position: "bottomright"});
 
-    var div = L.DomUtil.create('div', 'info legend');
-    labels = ['<strong>Categories</strong>'],
-    categories = ['Road Surface','Signage','Line Markings','Roadside Hazards','Other'];
-
-    for (var i = 0; i < categories.length; i++) {
-
-            div.innerHTML += 
-            labels.push(
-                '<i class="circle" style="background:' + getColor(categories[i]) + '"></i> ' +
-            (categories[i] ? categories[i] : '+'));
-
-        }
-        div.innerHTML = labels.join('<br>');
-    return div;
-    };
-    legend.addTo(Map);
-
-    function getColor(d) {
-      return d === 'Road Surface'  ? "#de2d26" :
-             d === 'Signage'  ? "#377eb8" :
-             d === 'Line Markings' ? "#4daf4a" :
-             d === 'Roadside Hazards' ? "#984ea3" :
-                          "#ff7f00";
+legend.onAdd = function (map) { 
+  var div = L.DomUtil.create("div", "info legend"),
+  mag = [0,1,2,3,4,5];
+  for (var i = 0; i < mag.length; i++) {
+    div.innerHTML += '<i style=”background:' + getColor(mag[i]) + '”></i> ' + mag[i] + (mag[i + 1] ? '&ndash;' + mag[i + 1] + '<br>' : '+');
     }
-    
+    return div
+} 
+
+legend.addTo(Map);
